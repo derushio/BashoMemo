@@ -37,7 +37,7 @@ public class PhotoFragment extends Fragment {
 	public long mId;
 	private Uri mUri;
 	private Uri mTempUri;
-	private Bitmap bitmap;
+	private Bitmap mBitmap;
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -71,8 +71,8 @@ public class PhotoFragment extends Fragment {
 					break;
 			}
 
-			bitmap = BitmapFactory.decodeFile(mUri.getPath());
-			mPhotoImage.setImageBitmap(bitmap);
+			mBitmap = BitmapFactory.decodeFile(mUri.getPath());
+			mPhotoImage.setImageBitmap(mBitmap);
 			mTempUri = mUri;
 		}
 	}
@@ -128,8 +128,8 @@ public class PhotoFragment extends Fragment {
 
 				try {
 					Log.d("uri", mUri.toString());
-					bitmap = BitmapFactory.decodeFile(mUri.getPath());
-					mPhotoImage.setImageBitmap(bitmap);
+					mBitmap = BitmapFactory.decodeFile(mUri.getPath());
+					mPhotoImage.setImageBitmap(mBitmap);
 					mTempUri = mUri;
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -155,9 +155,9 @@ public class PhotoFragment extends Fragment {
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-		if (bitmap != null) {
-			bitmap.recycle();
-			bitmap = null;
+		if (mBitmap != null) {
+			mBitmap.recycle();
+			mBitmap = null;
 		}
 	}
 }

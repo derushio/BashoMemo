@@ -8,19 +8,19 @@ import android.view.View;
  */
 
 public class MemoDataSet {
-	public String memoNme;
-	public Uri memoImageUri;
-	public View.OnClickListener onClickListener;
-	public View.OnLongClickListener onLongClickListener;
+	public String mMemoName;
+	public Uri mMemoImageUri;
+	public View.OnClickListener mOnClickListener;
+	public View.OnLongClickListener mOnLongClickListener;
 
 	public MemoDataSet() {
 
 	}
 
 	public MemoDataSet(String memoNme, Uri memoImageUri, View.OnClickListener onClickListener, View.OnLongClickListener onLongClickListener) {
-		this.memoNme = memoNme;
-		this.memoImageUri = memoImageUri;
-		this.onClickListener = onClickListener;
-		this.onLongClickListener = onLongClickListener;
+		mMemoName = memoNme;
+		mMemoImageUri = memoImageUri;
+		mOnClickListener = onClickListener;
+		mOnLongClickListener = onLongClickListener;
 	}
 }

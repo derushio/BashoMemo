@@ -22,13 +22,13 @@ import jp.itnav.derushio.bashomemo.database.MemoDataBaseManager;
 
 public class MemoListActivity extends ActionBarActivity {
 
-	private Toolbar toolbar;
+	private Toolbar mToolbar;
 
-	private MemoDataBaseManager memoDataBaseManager;
+	private MemoDataBaseManager mMemoDataBaseManager;
 
-	private RecyclerView memoList;
-	private ArrayList<MemoDataSet> memoDataSet;
-	private MemoCardAdapter memoCardAdapter;
+	private RecyclerView mMemoList;
+	private ArrayList<MemoDataSet> mMemoDataSet;
+	private MemoCardAdapter mMemoCardAdapter;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -37,29 +37,29 @@ public class MemoListActivity extends ActionBarActivity {
 		initializeToolbar();
 
 		// レイアウト情報をLinearLayoutに設定
-		memoList = (RecyclerView) findViewById(R.id.recycler_view);
+		mMemoList = (RecyclerView) findViewById(R.id.recycler_view);
 		LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
 		linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-		memoList.setLayoutManager(linearLayoutManager);
+		mMemoList.setLayoutManager(linearLayoutManager);
 		// レイアウト情報をLinearLayoutに設定
 
 		// レイアウト情報を設定
-		memoList.setHasFixedSize(true);
-		memoList.setItemAnimator(new DefaultItemAnimator());
+		mMemoList.setHasFixedSize(true);
+		mMemoList.setItemAnimator(new DefaultItemAnimator());
 		// レイアウト情報を設定
 
 		// メモのデータベースを読み込み
-		memoDataBaseManager = new MemoDataBaseManager(this);
+		mMemoDataBaseManager = new MemoDataBaseManager(this);
 		// メモのデータベースを読み込み
 
 		// メモのデータ情報を定義
-		memoDataSet = new ArrayList<>();
-		memoCardAdapter = new MemoCardAdapter(this, memoDataSet);
-		memoList.setAdapter(memoCardAdapter);
+		mMemoDataSet = new ArrayList<>();
+		mMemoCardAdapter = new MemoCardAdapter(this, mMemoDataSet);
+		mMemoList.setAdapter(mMemoCardAdapter);
 		// メモのデータ情報を定義
 
 		// 全てのデータをロード
-		Cursor cursor = memoDataBaseManager.getAllDataCursor(MemoDataBaseHelper.ITEM_ID);
+		Cursor cursor = mMemoDataBaseManager.getAllDataCursor(MemoDataBaseHelper.ITEM_ID);
 		cursor.moveToFirst();
 		// 全てのデータをロード
 
@@ -68,16 +68,16 @@ public class MemoListActivity extends ActionBarActivity {
 			// サムネイルがある場合は読み込む
 			Uri uri = null;
 
-			if (cursor.getString(memoDataBaseManager.INDEX_PICTURE_URI) != null) {
-				uri = Uri.parse(cursor.getString(memoDataBaseManager.INDEX_PICTURE_URI));
+			if (cursor.getString(mMemoDataBaseManager.INDEX_PICTURE_URI) != null) {
+				uri = Uri.parse(cursor.getString(mMemoDataBaseManager.INDEX_PICTURE_URI));
 			}
 			// サムネイルがある場合は読み込む
 
-			final Long id = cursor.getLong(memoDataBaseManager.INDEX_ID);
+			final Long id = cursor.getLong(mMemoDataBaseManager.INDEX_ID);
 			// idを読み込み
 
 			// データセットに読み込んだ情報を追加
-			memoDataSet.add(new MemoDataSet(cursor.getString(memoDataBaseManager.INDEX_TITLE), uri,
+			mMemoDataSet.add(new MemoDataSet(cursor.getString(mMemoDataBaseManager.INDEX_TITLE), uri,
 					new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {
@@ -89,7 +89,7 @@ public class MemoListActivity extends ActionBarActivity {
 					new View.OnLongClickListener() {
 						@Override
 						public boolean onLongClick(View v) {
-							memoDataBaseManager.deleteMemoData(id);
+							mMemoDataBaseManager.deleteMemoData(id);
 							Intent intent = new Intent(MemoListActivity.this, MemoListActivity.class);
 							startActivity(intent);
 							finish();
@@ -102,7 +102,7 @@ public class MemoListActivity extends ActionBarActivity {
 			// 次のデータ
 		}
 
-		memoCardAdapter.notifyDataSetChanged();
+		mMemoCardAdapter.notifyDataSetChanged();
 		// データをパース
 	}
 
@@ -112,15 +112,15 @@ public class MemoListActivity extends ActionBarActivity {
 	}
 
 	private void initializeToolbar() {
-		toolbar = (Toolbar) findViewById(R.id.toolbar);
-		if (toolbar == null) {
+		mToolbar = (Toolbar) findViewById(R.id.toolbar);
+		if (mToolbar == null) {
 			throw new IllegalStateException("Layout is required to include a Toolbar with id " +
 					"'toolbar'");
 		}
 
-		toolbar.setTitle("場所メモったーよ！！");
-		toolbar.setTitleTextColor(Color.WHITE);
-		toolbar.inflateMenu(R.menu.menu_memo_list);
+		mToolbar.setTitle("場所メモったーよ！！");
+		mToolbar.setTitleTextColor(Color.WHITE);
+		mToolbar.inflateMenu(R.menu.menu_memo_list);
 	}
 
 	public void addMemo(View v) {

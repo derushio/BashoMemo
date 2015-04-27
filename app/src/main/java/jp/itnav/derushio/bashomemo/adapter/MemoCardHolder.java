@@ -13,15 +13,15 @@ import jp.itnav.derushio.bashomemo.R;
  */
 public class MemoCardHolder extends RecyclerView.ViewHolder {
 
-	public CardView cardView;
-	public ImageView memoImage;
-	public TextView memoName;
+	public CardView mCardView;
+	public ImageView mMemoImage;
+	public TextView mMemoName;
 
 	public MemoCardHolder(View itemView) {
 		super(itemView);
 
-		cardView = (CardView) itemView.findViewById(R.id.card);
-		memoImage = (ImageView) itemView.findViewById(R.id.memo_image);
-		memoName = (TextView) itemView.findViewById(R.id.memo_name);
+		mCardView = (CardView) itemView.findViewById(R.id.card);
+		mMemoImage = (ImageView) itemView.findViewById(R.id.memo_image);
+		mMemoName = (TextView) itemView.findViewById(R.id.memo_name);
 	}
 }

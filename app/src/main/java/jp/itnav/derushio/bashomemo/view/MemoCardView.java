@@ -15,8 +15,8 @@ import jp.itnav.derushio.bashomemo.R;
  */
 public class MemoCardView extends CardView {
 
-	public ImageView memoImage;
-	public TextView memoText;
+	public ImageView mMemoImage;
+	public TextView mMemoText;
 
 	public MemoCardView(Context context) {
 		super(context);
@@ -30,7 +30,7 @@ public class MemoCardView extends CardView {
 
 	private void constructor(Context context) {
 		View root = LayoutInflater.from(context).inflate(R.layout.cardview_memo, this);
-		memoImage = (ImageView) root.findViewById(R.id.memo_image);
-		memoText = (TextView) root.findViewById(R.id.memo_name);
+		mMemoImage = (ImageView) root.findViewById(R.id.memo_image);
+		mMemoText = (TextView) root.findViewById(R.id.memo_name);
 	}
 }

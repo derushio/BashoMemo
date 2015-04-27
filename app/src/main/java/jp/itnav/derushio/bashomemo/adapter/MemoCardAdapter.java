@@ -34,19 +34,19 @@ public class MemoCardAdapter extends RecyclerView.Adapter<MemoCardHolder> {
 	public void onBindViewHolder(MemoCardHolder memoCardHolder, int i) {
 		final MemoDataSet data = mMemoDataSet.get(i);
 
-		memoCardHolder.memoName.setText(data.memoNme);
+		memoCardHolder.mMemoName.setText(data.mMemoName);
 
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
 		Bitmap bitmap;
 
-		if (data.memoImageUri != null) {
-			BitmapFactory.decodeFile(data.memoImageUri.getPath(), options);
+		if (data.mMemoImageUri != null) {
+			BitmapFactory.decodeFile(data.mMemoImageUri.getPath(), options);
 
 			options.inSampleSize = calculateInSampleSize(options, 50, 50);
 
 			options.inJustDecodeBounds = false;
-			bitmap = BitmapFactory.decodeFile(data.memoImageUri.getPath(), options);
+			bitmap = BitmapFactory.decodeFile(data.mMemoImageUri.getPath(), options);
 		} else {
 			BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.icon_photo, options);
 
@@ -56,13 +56,13 @@ public class MemoCardAdapter extends RecyclerView.Adapter<MemoCardHolder> {
 			bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.icon_photo, options);
 		}
 
-		memoCardHolder.memoImage.setImageBitmap(bitmap);
+		memoCardHolder.mMemoImage.setImageBitmap(bitmap);
 
-		if (data.onClickListener != null) {
-			memoCardHolder.cardView.setOnClickListener(data.onClickListener);
+		if (data.mOnClickListener != null) {
+			memoCardHolder.mCardView.setOnClickListener(data.mOnClickListener);
 		}
-		if (data.onLongClickListener != null) {
-			memoCardHolder.cardView.setOnLongClickListener(data.onLongClickListener);
+		if (data.mOnLongClickListener != null) {
+			memoCardHolder.mCardView.setOnLongClickListener(data.mOnLongClickListener);
 		}
 	}
 

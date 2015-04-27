@@ -15,29 +15,29 @@ import jp.itnav.derushio.bashomemo.R;
  * Created by derushio on 14/12/01.
  */
 public class MemoFragment extends Fragment {
-	private View rootView;
-	private EditText editMemo;
-	public String memo;
+	private View mRootView;
+	private EditText mEditMemo;
+	public String mMemo;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		if (rootView != null) {
-			ViewGroup parent = (ViewGroup) rootView.getParent();
+		if (mRootView != null) {
+			ViewGroup parent = (ViewGroup) mRootView.getParent();
 			if (parent != null) {
-				parent.removeView(rootView);
+				parent.removeView(mRootView);
 			}
 		}
 
 		try {
-			if (rootView == null) {
-				rootView = inflater.inflate(R.layout.fragment_memo, container, false);
+			if (mRootView == null) {
+				mRootView = inflater.inflate(R.layout.fragment_memo, container, false);
 			}
 
-			if (editMemo == null) {
-				editMemo = (EditText) rootView.findViewById(R.id.editMemo);
-				editMemo.setText(memo);
+			if (mEditMemo == null) {
+				mEditMemo = (EditText) mRootView.findViewById(R.id.editMemo);
+				mEditMemo.setText(mMemo);
 			}
-			return rootView;
+			return mRootView;
 		} catch (InflateException e) {
 			e.printStackTrace();
 		}
@@ -48,16 +48,16 @@ public class MemoFragment extends Fragment {
 	@Override
 	public void onPause() {
 		super.onPause();
-		editMemo.clearFocus();
-		memo = editMemo.getText().toString();
+		mEditMemo.clearFocus();
+		mMemo = mEditMemo.getText().toString();
 	}
 
 	public String getMemo() {
-		if (editMemo != null) {
-			editMemo.clearFocus();
-			memo = editMemo.getText().toString();
+		if (mEditMemo != null) {
+			mEditMemo.clearFocus();
+			mMemo = mEditMemo.getText().toString();
 		}
 
-		return memo;
+		return mMemo;
 	}
 }
