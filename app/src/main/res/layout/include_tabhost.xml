@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TabHost
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@android:id/tabhost"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:elevation="4dp"
+	android:background="#FFFFFF">
+
+	<TabWidget
+		android:id="@android:id/tabs"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"/>
+
+	<FrameLayout
+		android:id="@android:id/tabcontent"
+		android:layout_width="0dp"
+		android:layout_height="0dp"/>
+
+	<View
+		android:id="@+id/indicator"
+		android:layout_width="match_parent"
+		android:layout_height="2dp"
+		android:layout_gravity="bottom"
+		android:background="@color/color_primary" />
+
+</TabHost>
