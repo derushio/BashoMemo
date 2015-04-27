@@ -76,8 +76,6 @@ public class MemoCardAdapter extends RecyclerView.Adapter<MemoCardHolder> {
 	}
 
 	public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-
-		// 画像の元サイズ
 		final int height = options.outHeight;
 		final int width = options.outWidth;
 		int inSampleSize = 1;

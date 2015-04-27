@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,7 +25,7 @@ import jp.itnav.derushio.bashomemo.fragmentmemoviewer.GoogleMapFragment;
 import jp.itnav.derushio.bashomemo.fragmentmemoviewer.MemoFragment;
 import jp.itnav.derushio.bashomemo.fragmentmemoviewer.PhotoFragment;
 
-public class MemoViewerActivity extends ActionBarActivity implements TextWatcher {
+public class MemoViewerActivity extends AppCompatActivity implements TextWatcher {
 	/**
 	 * メモ部を表示するActivity
 	 */
