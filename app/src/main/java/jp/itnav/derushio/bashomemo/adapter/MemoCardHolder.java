@@ -10,6 +10,7 @@ import jp.itnav.derushio.bashomemo.R;
 
 /**
  * Created by derushio on 15/03/23.
+ * AdapterからCardViewを操作するためのクラス
  */
 public class MemoCardHolder extends RecyclerView.ViewHolder {
 
@@ -23,5 +24,6 @@ public class MemoCardHolder extends RecyclerView.ViewHolder {
 		mCardView = (CardView) itemView.findViewById(R.id.card);
 		mMemoImage = (ImageView) itemView.findViewById(R.id.memo_image);
 		mMemoName = (TextView) itemView.findViewById(R.id.memo_name);
+		// 中身からfindViewByIdしていじれるようにする
 	}
 }
