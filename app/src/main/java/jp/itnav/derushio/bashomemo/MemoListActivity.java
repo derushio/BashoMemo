@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,15 +20,16 @@ import jp.itnav.derushio.bashomemo.database.MemoDataBaseHelper;
 import jp.itnav.derushio.bashomemo.database.MemoDataBaseManager;
 
 
-public class MemoListActivity extends ActionBarActivity {
+public class MemoListActivity extends AppCompatActivity {
 
+	// View
 	private Toolbar mToolbar;
-
-	private MemoDataBaseManager mMemoDataBaseManager;
-
 	private RecyclerView mMemoList;
 	private ArrayList<MemoDataSet> mMemoDataSet;
 	private MemoCardAdapter mMemoCardAdapter;
+	// View
+
+	private MemoDataBaseManager mMemoDataBaseManager;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -84,6 +85,7 @@ public class MemoListActivity extends ActionBarActivity {
 							Intent intent = new Intent(MemoListActivity.this, MemoViewerActivity.class);
 							intent.putExtra(MemoViewerActivity.INTENT_EXTRA_ID, id);
 							startActivity(intent);
+							// 通常クリックだった場合はそのメモを開く
 						}
 					},
 					new View.OnLongClickListener() {
@@ -94,6 +96,7 @@ public class MemoListActivity extends ActionBarActivity {
 							startActivity(intent);
 							finish();
 							return false;
+							// 長押しだった場合はそのメモを削除してAcivityを再起動
 						}
 					}));
 			// データセットに読み込んだ情報を追加
@@ -101,31 +104,27 @@ public class MemoListActivity extends ActionBarActivity {
 			cursor.moveToNext();
 			// 次のデータ
 		}
+		// データをパース
 
 		mMemoCardAdapter.notifyDataSetChanged();
-		// データをパース
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
+		// データセットが変わったことを通知する
 	}
 
 	private void initializeToolbar() {
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		if (mToolbar == null) {
-			throw new IllegalStateException("Layout is required to include a Toolbar with id " +
-					"'toolbar'");
+			throw new IllegalStateException("Layout is required to include a Toolbar with id " + "'toolbar'");
 		}
-
 		mToolbar.setTitle("場所メモったーよ！！");
 		mToolbar.setTitleTextColor(Color.WHITE);
 		mToolbar.inflateMenu(R.menu.menu_memo_list);
 	}
+	// ツールバーを初期化
 
 	public void addMemo(View v) {
 		Intent intent = new Intent(MemoListActivity.this, MemoViewerActivity.class);
 		intent.putExtra(MemoViewerActivity.INTENT_EXTRA_ID, -1L);
 		startActivity(intent);
 	}
+	// メモ追加
 }

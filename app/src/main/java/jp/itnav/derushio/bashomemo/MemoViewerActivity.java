@@ -30,24 +30,33 @@ public class MemoViewerActivity extends AppCompatActivity implements TextWatcher
 	 * メモ部を表示するActivity
 	 */
 
+	// Statics
 	public static final String INTENT_EXTRA_ID = "INTENT_EXTRA_ID";
+	// Statics
 
+	// View
 	private Toolbar mToolbar;
-
 	private TabWidget mTabWidget;
 	private View mIndicator;
-
 	private ViewPager mViewPager;
+	// View
+
+	// ViewPagerClass
 	private FragmentManager mFragmentManager;
 	private FragmentPagerAdapter mFragmentPagerAdapter;
+	// ViewPagerClass
 
-	private MemoDataBaseManager mMemoDataBaseManager;
-	private long mId;
-
-	private String mTitle;
+	// Fragments
 	private GoogleMapFragment mGoogleMapFragment;
 	private PhotoFragment mPhotoFragment;
 	private MemoFragment mMemoFragment;
+	// Fragments
+
+	// Vars
+	private MemoDataBaseManager mMemoDataBaseManager;
+	private long mId;
+	private String mTitle;
+	// Vars
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
