@@ -9,6 +9,7 @@ import android.view.View;
  */
 
 public class MemoDataSet {
+
 	// CardView情報
 	public String mMemoName;
 	public Uri mMemoImageUri;
@@ -16,12 +17,11 @@ public class MemoDataSet {
 	public View.OnLongClickListener mOnLongClickListener;
 	// CardView情報
 
-	public MemoDataSet() {
-
+	private MemoDataSet() {
 	}
 
-	public MemoDataSet(String memoNme, Uri memoImageUri, View.OnClickListener onClickListener, View.OnLongClickListener onLongClickListener) {
-		mMemoName = memoNme;
+	public MemoDataSet(String memoName, Uri memoImageUri, View.OnClickListener onClickListener, View.OnLongClickListener onLongClickListener) {
+		mMemoName = memoName;
 		mMemoImageUri = memoImageUri;
 		mOnClickListener = onClickListener;
 		mOnLongClickListener = onLongClickListener;

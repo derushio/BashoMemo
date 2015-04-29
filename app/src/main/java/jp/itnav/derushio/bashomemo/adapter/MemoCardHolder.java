@@ -14,9 +14,11 @@ import jp.itnav.derushio.bashomemo.R;
  */
 public class MemoCardHolder extends RecyclerView.ViewHolder {
 
+	// Views
 	public CardView mCardView;
 	public ImageView mMemoImage;
 	public TextView mMemoName;
+	// Views
 
 	public MemoCardHolder(View itemView) {
 		super(itemView);

@@ -2,6 +2,7 @@ package jp.itnav.derushio.bashomemo;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -18,6 +19,8 @@ import android.widget.FrameLayout;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import jp.itnav.derushio.bashomemo.adapter.ViewPagerAdapter;
 import jp.itnav.derushio.bashomemo.database.MemoDataBaseManager;
@@ -79,7 +82,6 @@ public class MemoViewerActivity extends AppCompatActivity implements TextWatcher
 
 		mFragmentPagerAdapter = new ViewPagerAdapter(this, mFragmentManager);
 
-
 		mViewPager = (ViewPager) findViewById(R.id.viewpager);
 		mViewPager.setAdapter(mFragmentPagerAdapter);
 
@@ -105,15 +107,37 @@ public class MemoViewerActivity extends AppCompatActivity implements TextWatcher
 		mViewPager.setOnPageChangeListener(new PageChangeListener());
 
 		mGoogleMapFragment = (GoogleMapFragment) mFragmentPagerAdapter.getItem(0);
-		mGoogleMapFragment.mLastLatLng = mMemoDataBaseManager.findLatLngById(mId);
+		Bundle googleMapArgment = new Bundle();
+		final LatLng latLng = mMemoDataBaseManager.findLatLngById(mId);
+		double[] latLngDouble;
+		if (latLng != null) {
+			latLngDouble = new double[]{latLng.latitude, latLng.longitude};
+		} else {
+			latLngDouble = new double[]{GoogleMapFragment.ARGMENT_NULL, GoogleMapFragment.ARGMENT_NULL};
+		}
+		googleMapArgment.putDoubleArray(GoogleMapFragment.LAT_LNG_ARGMENT, latLngDouble);
+		mGoogleMapFragment.setArguments(googleMapArgment);
 
 		mPhotoFragment = (PhotoFragment) mFragmentPagerAdapter.getItem(1);
-		mPhotoFragment.setUri(mMemoDataBaseManager.findPictureUriById(mId));
+		Bundle photoFragmentArgment = new Bundle();
+		Uri uri = mMemoDataBaseManager.findPictureUriById(mId);
+		String path;
+		if (uri != null) {
+			path = uri.getPath();
+		} else {
+			path = PhotoFragment.ARGMENT_NULL;
+		}
+		photoFragmentArgment.putString(PhotoFragment.PHTO_URI_ARGMENT, path);
+		mPhotoFragment.setArguments(photoFragmentArgment);
 
 		mMemoFragment = (MemoFragment) mFragmentPagerAdapter.getItem(2);
-		mMemoFragment.mMemo = mMemoDataBaseManager.findMemoById(mId);
-
-
+		Bundle memoFragmentArgment = new Bundle();
+		String memo = mMemoDataBaseManager.findMemoById(mId);
+		if (memo == null) {
+			memo = MemoFragment.ARGMENT_NULL;
+		}
+		memoFragmentArgment.putString(MemoFragment.MEMO_ARGMENT, memo);
+		mMemoFragment.setArguments(memoFragmentArgment);
 	}
 
 	private void initializeToolbar() {

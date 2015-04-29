@@ -24,21 +24,23 @@ public class CustomInfoAdapter implements GoogleMap.InfoWindowAdapter {
 
 	public CustomInfoAdapter(Context context) {
 		this.mContext = context;
-		mInfoWindow = LayoutInflater.from(context).inflate(R.layout.window_custom_info, null);
+		mInfoWindow = LayoutInflater.from(context).inflate(R.layout.window_custom_info, null, false);
 	}
 
 	@Override
 	public View getInfoWindow(Marker marker) {
-		render(marker, mInfoWindow);
-		return mInfoWindow;
+		return null;
 	}
+	// 吹き出し無し
 
 	@Override
 	public View getInfoContents(Marker marker) {
-		return null;
+		setInfo(marker, mInfoWindow);
+		return mInfoWindow;
 	}
+	// 吹き出し有り
 
-	private void render(Marker marker, View view) {
+	private void setInfo(Marker marker, View view) {
 		mTitleText = (TextView) view.findViewById(R.id.textViewTitle);
 		mTitleText.setText(marker.getTitle());
 	}

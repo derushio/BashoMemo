@@ -36,6 +36,9 @@ import jp.itnav.derushio.bashomemo.adapter.CustomInfoAdapter;
  * Created by derushio on 14/11/30.
  */
 public class GoogleMapFragment extends Fragment implements GooglePlayServicesClient.ConnectionCallbacks, LocationListener {
+	public static final String LAT_LNG_ARGMENT = "LatLng";
+	public static final double ARGMENT_NULL = -1D;
+
 	private View mRootView;
 	private FrameLayout mMapHolder;
 	private ProgressDialog mConnectingDialog;
@@ -44,7 +47,7 @@ public class GoogleMapFragment extends Fragment implements GooglePlayServicesCli
 	private LocationClient mLocationClient;
 
 	private String mMarkerTitle = "Point";
-	public LatLng mLastLatLng;
+	private LatLng mLastLatLng;
 
 	private MemoViewerActivity.OnLocationChangedListener mOnLocationChangedListener;
 
@@ -84,8 +87,10 @@ public class GoogleMapFragment extends Fragment implements GooglePlayServicesCli
 				CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(35, 135), 4);
 				mGoogleMap.moveCamera(cameraUpdate);
 
-				if (mLastLatLng != null) {
-					setMarker(mLastLatLng);
+				double[] latLngDouble = getArguments().getDoubleArray(LAT_LNG_ARGMENT);
+				if (latLngDouble[0] != ARGMENT_NULL && latLngDouble[1] != ARGMENT_NULL) {
+					LatLng latLng = new LatLng(latLngDouble[0], latLngDouble[1]);
+					setlatLng(latLng);
 				}
 			}
 
@@ -125,10 +130,6 @@ public class GoogleMapFragment extends Fragment implements GooglePlayServicesCli
 
 		CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(position, 16);
 		mGoogleMap.animateCamera(cameraUpdate);
-	}
-
-	public LatLng getLastLatLng() {
-		return this.mLastLatLng;
 	}
 
 	@Override
@@ -191,5 +192,15 @@ public class GoogleMapFragment extends Fragment implements GooglePlayServicesCli
 
 	public void animationCancel() {
 		mGoogleMap.stopAnimation();
+	}
+
+	public LatLng getLastLatLng() {
+		return mLastLatLng;
+	}
+
+	public void setlatLng(LatLng latLng) {
+		if (mGoogleMap != null) {
+			setMarker(latLng);
+		}
 	}
 }

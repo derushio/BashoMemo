@@ -7,10 +7,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
 import java.util.ArrayList;
 
 import jp.itnav.derushio.bashomemo.R;
+import jp.itnav.derushio.bashomemo.photo_sample.PhotoSample;
 
 /**
  * Created by derushio on 15/03/23.
@@ -18,12 +20,12 @@ import jp.itnav.derushio.bashomemo.R;
  */
 public class MemoCardAdapter extends RecyclerView.Adapter<MemoCardHolder> {
 	private Context mContext;
-	private ArrayList<MemoDataSet> mMemoDataSet;
+	private ArrayList<MemoDataSet> mMemoDataSets;
 	// このデータセットの数だけCardViewを生成する
 
 	public MemoCardAdapter(Context context, ArrayList<MemoDataSet> memoDataSets) {
 		mContext = context;
-		mMemoDataSet = memoDataSets;
+		mMemoDataSets = memoDataSets;
 	}
 
 	@Override
@@ -38,48 +40,63 @@ public class MemoCardAdapter extends RecyclerView.Adapter<MemoCardHolder> {
 	// 一つあたりのCardViewを生成
 
 	@Override
-	public void onBindViewHolder(MemoCardHolder memoCardHolder, int i) {
-		final MemoDataSet data = mMemoDataSet.get(i);
+	public void onBindViewHolder(final MemoCardHolder memoCardHolder, int i) {
+		final MemoDataSet data = mMemoDataSets.get(i);
 		// ポジション情報からデータセットを読み込み
 
 		memoCardHolder.mMemoName.setText(data.mMemoName);
 		// カードホルダーの名前にデータセットの名前を代入
 
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		// サムネイルなのに大サイズの画像をいちいち読み込んでいたらメモリがいくらあっても足りない
-		// なので、サンプリング（ピクセルを抜いて読む）して、画像サイズを大幅に小さくする
-		options.inJustDecodeBounds = true;
-		// trueにすることで、実際の画像は読まれず、情報だけ取ってこれる
-		Bitmap bitmap;
-		// 読み込む対象Bitmap
+		ViewTreeObserver viewTreeObserver = memoCardHolder.mMemoImage.getViewTreeObserver();
+		viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+			private boolean isInitialized = false;
 
-		if (data.mMemoImageUri != null) {
-			// mMemoImageUriが存在したら
-			BitmapFactory.decodeFile(data.mMemoImageUri.getPath(), options);
-			// ファイルをデコード（情報だけ取ってこられていて、実際は読まれていない（optionsによって））
+			@Override
+			public void onGlobalLayout() {
+				if (!isInitialized) {
+					BitmapFactory.Options options = new BitmapFactory.Options();
+					// サムネイルなのに大サイズの画像をいちいち読み込んでいたらメモリがいくらあっても足りない
+					// なので、サンプリング（ピクセルを抜いて読む）して、画像サイズを大幅に小さくする
+					options.inJustDecodeBounds = true;
+					// trueにすることで、実際の画像は読まれず、情報だけ取ってこれる
+					Bitmap bitmap;
+					// 読み込む対象Bitmap
 
-			options.inSampleSize = calculateInSampleSize(options, 50, 50);
-			// サンプルサイズを確定
+					int width = memoCardHolder.mMemoImage.getWidth();
+					int height = memoCardHolder.mMemoImage.getHeight();
 
-			options.inJustDecodeBounds = false;
-			// falseにすることにより、実際に画像を読む
-			bitmap = BitmapFactory.decodeFile(data.mMemoImageUri.getPath(), options);
-			// 画像をサンプリングして読む
-		} else {
-			BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.icon_photo, options);
-			// 無いとき用の画像の情報を読み込む
+					if (data.mMemoImageUri != null) {
+						// mMemoImageUriが存在したら
+						BitmapFactory.decodeFile(data.mMemoImageUri.getPath(), options);
+						// ファイルをデコード（情報だけ取ってこられていて、実際は読まれていない（optionsによって））
 
-			options.inSampleSize = calculateInSampleSize(options, 50, 50);
-			// サンプルサイズを確定
+						options.inSampleSize = PhotoSample.getSampleSize(options, width, height);
+						// サンプルサイズを確定
 
-			options.inJustDecodeBounds = false;
-			// falseにすることにより、実際に画像を読む
-			bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.icon_photo, options);
-			// 画像をサンプリングして読む
-		}
+						options.inJustDecodeBounds = false;
+						// falseにすることにより、実際に画像を読む
+						bitmap = BitmapFactory.decodeFile(data.mMemoImageUri.getPath(), options);
+						// 画像をサンプリングして読む
+					} else {
+						BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.icon_photo, options);
+						// 無いとき用の画像の情報を読み込む
 
-		memoCardHolder.mMemoImage.setImageBitmap(bitmap);
-		// 読み込んだ画像をセットする
+						options.inSampleSize = PhotoSample.getSampleSize(options, width, height);
+						// サンプルサイズを確定
+
+						options.inJustDecodeBounds = false;
+						// falseにすることにより、実際に画像を読む
+						bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.icon_photo, options);
+						// 画像をサンプリングして読む
+					}
+
+					memoCardHolder.mMemoImage.setImageBitmap(bitmap);
+					// 読み込んだ画像をセットする
+
+					isInitialized = true;
+				}
+			}
+		});
 
 		if (data.mOnClickListener != null) {
 			memoCardHolder.mCardView.setOnClickListener(data.mOnClickListener);
@@ -94,30 +111,12 @@ public class MemoCardAdapter extends RecyclerView.Adapter<MemoCardHolder> {
 
 	@Override
 	public int getItemCount() {
-		if (mMemoDataSet != null) {
-			return mMemoDataSet.size();
+		if (mMemoDataSets != null) {
+			return mMemoDataSets.size();
 			// データセットのサイズからいくらアイテムあるか判断
 		} else {
 			return 0;
+			// データセットが定義されてなかったら0を返す
 		}
-	}
-
-	public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-		// オプションと求める幅と高さからサンプルサイズを確定
-		final int height = options.outHeight;
-		final int width = options.outWidth;
-		int inSampleSize = 1;
-		// デフォルトはフルサイズ
-
-		if (height > reqHeight || width > reqWidth) {
-			// フルサイズよりも小さくする必要があるなら
-			if (width > height) {
-				inSampleSize = Math.round((float) height / (float) reqHeight);
-			} else {
-				inSampleSize = Math.round((float) width / (float) reqWidth);
-			}
-			// 幅の小さい方でサンプリングサイズを確定
-		}
-		return inSampleSize;
 	}
 }
