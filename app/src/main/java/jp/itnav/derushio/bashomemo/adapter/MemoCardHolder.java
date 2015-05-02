@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import jp.itnav.derushio.bashomemo.R;
+import jp.itnav.derushio.bashomemo.view.CheckableImageView;
 
 /**
  * Created by derushio on 15/03/23.
@@ -18,14 +19,16 @@ public class MemoCardHolder extends RecyclerView.ViewHolder {
 	public CardView mCardView;
 	public ImageView mMemoImage;
 	public TextView mMemoName;
+	public CheckableImageView mChecker;
 	// Views
 
 	public MemoCardHolder(View itemView) {
 		super(itemView);
 
-		mCardView = (CardView) itemView.findViewById(R.id.card);
+		mCardView = (CardView) itemView;
 		mMemoImage = (ImageView) itemView.findViewById(R.id.memo_image);
 		mMemoName = (TextView) itemView.findViewById(R.id.memo_name);
+		mChecker = (CheckableImageView) itemView.findViewById(R.id.checker);
 		// 中身からfindViewByIdしていじれるようにする
 	}
 }

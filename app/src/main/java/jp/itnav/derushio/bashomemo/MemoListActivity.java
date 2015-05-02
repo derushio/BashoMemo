@@ -11,10 +11,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 
 import jp.itnav.derushio.bashomemo.adapter.MemoCardAdapter;
+import jp.itnav.derushio.bashomemo.adapter.MemoCardHolder;
 import jp.itnav.derushio.bashomemo.adapter.MemoDataSet;
 import jp.itnav.derushio.bashomemo.database.MemoDataBaseHelper;
 import jp.itnav.derushio.bashomemo.database.MemoDataBaseManager;
@@ -27,6 +30,7 @@ public class MemoListActivity extends AppCompatActivity {
 	private RecyclerView mMemoList;
 	private ArrayList<MemoDataSet> mMemoDataSet;
 	private MemoCardAdapter mMemoCardAdapter;
+	private ImageView mImageFloating;
 	// View
 
 	private MemoDataBaseManager mMemoDataBaseManager;
@@ -37,8 +41,12 @@ public class MemoListActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_memo_list);
 		initializeToolbar();
 
-		// レイアウト情報をLinearLayoutに設定
+		// findViewById
 		mMemoList = (RecyclerView) findViewById(R.id.recycler_view);
+		mImageFloating = (ImageButton) findViewById(R.id.image_button_floating);
+		// findViewById
+
+		// レイアウト情報をLinearLayoutに設定
 		LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
 		linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		mMemoList.setLayoutManager(linearLayoutManager);
@@ -91,12 +99,10 @@ public class MemoListActivity extends AppCompatActivity {
 					new View.OnLongClickListener() {
 						@Override
 						public boolean onLongClick(View v) {
-							mMemoDataBaseManager.deleteMemoData(id);
-							Intent intent = new Intent(MemoListActivity.this, MemoListActivity.class);
-							startActivity(intent);
-							finish();
-							return false;
-							// 長押しだった場合はそのメモを削除してAcivityを再起動
+							MemoCardHolder memoCardHolder = new MemoCardHolder(v);
+							memoCardHolder.mChecker.check();
+							mImageFloating.setImageResource(R.mipmap.button_floating_trash);
+							return true;
 						}
 					}));
 			// データセットに読み込んだ情報を追加
@@ -108,6 +114,7 @@ public class MemoListActivity extends AppCompatActivity {
 
 		mMemoCardAdapter.notifyDataSetChanged();
 		// データセットが変わったことを通知する
+
 	}
 
 	private void initializeToolbar() {

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:padding="16dp">
+
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="名前変更"
+			android:textSize="25sp"
+			android:textColor="@android:color/black"/>
+
+		<EditText
+			android:id="@+id/edit_name"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+		<android.support.v4.widget.Space
+			android:layout_width="match_parent"
+			android:layout_height="36dp"/>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
+
+			<Button
+				android:id="@+id/button_cancel"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="CANCEL"/>
+
+			<android.support.v4.widget.Space
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"/>
+
+			<Button
+				android:id="@+id/button_ok"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="OK"/>
+		</LinearLayout>
+	</LinearLayout>
+
+</android.support.v7.widget.CardView>

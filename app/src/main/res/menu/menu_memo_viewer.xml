@@ -3,8 +3,11 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	tools:context=".MainActivity">
 	<item
+		android:id="@+id/action_change_name"
+		android:title="名前を変える"
+		android:orderInCategory="100"/>
+	<item
 		android:id="@+id/action_settings"
 		android:title="@string/action_settings"
-		android:orderInCategory="100"
-		android:showAsAction="never"/>
+		android:orderInCategory="100"/>
 </menu>

@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,6 +16,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TabHost;
 import android.widget.TabWidget;
@@ -58,7 +62,6 @@ public class MemoViewerActivity extends AppCompatActivity implements TextWatcher
 	// Vars
 	private MemoDataBaseManager mMemoDataBaseManager;
 	private long mId;
-	private String mTitle;
 	// Vars
 
 	@Override
@@ -75,7 +78,6 @@ public class MemoViewerActivity extends AppCompatActivity implements TextWatcher
 			mId = mMemoDataBaseManager.addMemoData("新規データ");
 		}
 
-		mTitle = mMemoDataBaseManager.findTitleById(mId);
 		initializeToolbar();
 
 		mFragmentManager = getSupportFragmentManager();
@@ -147,10 +149,10 @@ public class MemoViewerActivity extends AppCompatActivity implements TextWatcher
 					"'toolbar'");
 		}
 
-
-		mToolbar.setTitle(mTitle);
+		mToolbar.setTitle(mMemoDataBaseManager.findTitleById(mId));
 		mToolbar.setTitleTextColor(Color.WHITE);
-		mToolbar.inflateMenu(R.menu.menu_memo_list);
+		mToolbar.inflateMenu(R.menu.menu_memo_viewer);
+		setSupportActionBar(mToolbar);
 	}
 
 	@Override
@@ -159,7 +161,7 @@ public class MemoViewerActivity extends AppCompatActivity implements TextWatcher
 		startActivity(intent);
 
 		mGoogleMapFragment.animationCancel();
-		mMemoDataBaseManager.updateMemoData(mId, mTitle, mGoogleMapFragment.getLastLatLng(), mPhotoFragment.getUri(), mMemoFragment.getMemo());
+		mMemoDataBaseManager.updateMemoData(mId, mToolbar.getTitle().toString(), mGoogleMapFragment.getLastLatLng(), mPhotoFragment.getUri(), mMemoFragment.getMemo());
 
 		finish();
 	}
@@ -190,8 +192,36 @@ public class MemoViewerActivity extends AppCompatActivity implements TextWatcher
 		int id = item.getItemId();
 
 		//noinspection SimplifiableIfStatement
-		if (id == R.id.action_settings) {
-			return true;
+		switch (id) {
+			case (R.id.action_change_name):
+				final AppCompatDialog appCompatDialog = new AppCompatDialog(this);
+				View view = LayoutInflater.from(this).inflate(R.layout.dialog_change_name, null, false);
+				appCompatDialog.setContentView(view);
+				appCompatDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+				final EditText editName = (EditText) view.findViewById(R.id.edit_name);
+				Button buttonOk = (Button) view.findViewById(R.id.button_ok);
+				Button buttonCancel = (Button) view.findViewById(R.id.button_cancel);
+
+				editName.setText(mToolbar.getTitle().toString());
+
+				buttonOk.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						mToolbar.setTitle(editName.getText().toString());
+						appCompatDialog.dismiss();
+					}
+				});
+
+				buttonCancel.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						appCompatDialog.dismiss();
+					}
+				});
+
+				appCompatDialog.show();
+				break;
 		}
 
 		return super.onOptionsItemSelected(item);
