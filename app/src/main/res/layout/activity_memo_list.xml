@@ -40,6 +40,6 @@
 			android:adjustViewBounds="true"
 			android:scaleType="fitCenter"
 			android:elevation="4dp"
-			android:onClick="addMemo"/>
+			android:onClick="onClickFloatingButton"/>
 	</RelativeLayout>
 </RelativeLayout>

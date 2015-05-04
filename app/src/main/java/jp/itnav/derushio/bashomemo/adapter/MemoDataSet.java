@@ -11,6 +11,7 @@ import android.view.View;
 public class MemoDataSet {
 
 	// CardView情報
+	public long mId;
 	public String mMemoName;
 	public Uri mMemoImageUri;
 	public View.OnClickListener mOnClickListener;
@@ -20,7 +21,8 @@ public class MemoDataSet {
 	private MemoDataSet() {
 	}
 
-	public MemoDataSet(String memoName, Uri memoImageUri, View.OnClickListener onClickListener, View.OnLongClickListener onLongClickListener) {
+	public MemoDataSet(long id, String memoName, Uri memoImageUri, View.OnClickListener onClickListener, View.OnLongClickListener onLongClickListener) {
+		mId = id;
 		mMemoName = memoName;
 		mMemoImageUri = memoImageUri;
 		mOnClickListener = onClickListener;

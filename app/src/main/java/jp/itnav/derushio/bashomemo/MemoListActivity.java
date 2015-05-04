@@ -35,6 +35,8 @@ public class MemoListActivity extends AppCompatActivity {
 
 	private MemoDataBaseManager mMemoDataBaseManager;
 
+	private boolean mDeleteMode = false;
+
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -82,11 +84,11 @@ public class MemoListActivity extends AppCompatActivity {
 			}
 			// サムネイルがある場合は読み込む
 
-			final Long id = cursor.getLong(mMemoDataBaseManager.INDEX_ID);
+			final long id = cursor.getLong(mMemoDataBaseManager.INDEX_ID);
 			// idを読み込み
 
 			// データセットに読み込んだ情報を追加
-			mMemoDataSet.add(new MemoDataSet(cursor.getString(mMemoDataBaseManager.INDEX_TITLE), uri,
+			mMemoDataSet.add(new MemoDataSet(id, cursor.getString(mMemoDataBaseManager.INDEX_TITLE), uri,
 					new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {
@@ -102,6 +104,7 @@ public class MemoListActivity extends AppCompatActivity {
 							MemoCardHolder memoCardHolder = new MemoCardHolder(v);
 							memoCardHolder.mChecker.check();
 							mImageFloating.setImageResource(R.mipmap.button_floating_trash);
+							mDeleteMode = true;
 							return true;
 						}
 					}));
@@ -128,10 +131,21 @@ public class MemoListActivity extends AppCompatActivity {
 	}
 	// ツールバーを初期化
 
-	public void addMemo(View v) {
-		Intent intent = new Intent(MemoListActivity.this, MemoViewerActivity.class);
-		intent.putExtra(MemoViewerActivity.INTENT_EXTRA_ID, -1L);
-		startActivity(intent);
+	public void onClickFloatingButton(View v) {
+		if (mDeleteMode) {
+			for (int i = 0; i < mMemoList.getChildCount(); i++) {
+				MemoCardHolder holder = (MemoCardHolder) mMemoList.getChildViewHolder(mMemoList.getChildAt(i));
+				if (holder.getChecked()) {
+					mMemoDataBaseManager.deleteMemoData(holder.mId);
+					Intent intent = new Intent(this, this.getClass());
+					startActivity(intent);
+				}
+			}
+		} else {
+			Intent intent = new Intent(MemoListActivity.this, MemoViewerActivity.class);
+			intent.putExtra(MemoViewerActivity.INTENT_EXTRA_ID, -1L);
+			startActivity(intent);
+		}
 	}
 	// メモ追加
 }

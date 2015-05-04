@@ -15,6 +15,7 @@ import jp.itnav.derushio.bashomemo.view.CheckableImageView;
  */
 public class MemoCardHolder extends RecyclerView.ViewHolder {
 
+	public long mId;
 	// Views
 	public CardView mCardView;
 	public ImageView mMemoImage;
@@ -30,5 +31,9 @@ public class MemoCardHolder extends RecyclerView.ViewHolder {
 		mMemoName = (TextView) itemView.findViewById(R.id.memo_name);
 		mChecker = (CheckableImageView) itemView.findViewById(R.id.checker);
 		// 中身からfindViewByIdしていじれるようにする
+	}
+
+	public boolean getChecked(){
+		return mChecker.getChecked();
 	}
 }

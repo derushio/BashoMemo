@@ -107,17 +107,16 @@ public class PhotoFragment extends Fragment {
 				});
 
 				ViewTreeObserver viewTreeObserver = mPhotoImage.getViewTreeObserver();
-				viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+				viewTreeObserver.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
 					@Override
-					public void onGlobalLayout() {
-						if (!isInitialized) {
-							String uriString = getArguments().getString(PHTO_URI_ARGMENT);
-							if (!uriString.equals(ARGMENT_NULL)) {
-								Uri uri = Uri.parse(uriString);
-								setUri(uri);
-							}
-							isInitialized = true;
+					public boolean onPreDraw() {
+						String uriString = getArguments().getString(PHTO_URI_ARGMENT);
+						if (!uriString.equals(ARGMENT_NULL)) {
+							Uri uri = Uri.parse(uriString);
+							setUri(uri);
 						}
+						mPhotoImage.getViewTreeObserver().removeOnPreDrawListener(this);
+						return false;
 					}
 				});
 			}

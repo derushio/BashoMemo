@@ -87,11 +87,14 @@ public class MemoDataBaseManager {
 		if (latLng != null) {
 			contentValues.put(MemoDataBaseHelper.ITEM_LATLNG.NAME, latLngStatementGenerator(latLng));
 		}
+
 		if (pictureUri != null) {
 			contentValues.put(MemoDataBaseHelper.ITEM_PICTURE_URI.NAME, pictureUri.toString());
 		}
 
-		contentValues.put(MemoDataBaseHelper.ITEM_MEMO.NAME, memo);
+		if (memo != null) {
+			contentValues.put(MemoDataBaseHelper.ITEM_MEMO.NAME, memo);
+		}
 
 		String whereCause = MemoDataBaseHelper.ITEM_ID.NAME + "==?";
 		String whereCauseArgs[] = {("" + id)};
