@@ -17,14 +17,14 @@ public class CustomInfoAdapter implements GoogleMap.InfoWindowAdapter {
 	/**
 	 * GoogleMapの吹き出しを定義するClass
 	 */
-	private Context mContext;
-	private View mInfoWindow;
+	private Context context;
+	private View infoWindow;
 
-	private TextView mTitleText;
+	private TextView titleText;
 
 	public CustomInfoAdapter(Context context) {
-		this.mContext = context;
-		mInfoWindow = LayoutInflater.from(context).inflate(R.layout.window_custom_info, null, false);
+		this.context = context;
+		infoWindow = LayoutInflater.from(context).inflate(R.layout.window_custom_info, null, false);
 	}
 
 	@Override
@@ -35,13 +35,13 @@ public class CustomInfoAdapter implements GoogleMap.InfoWindowAdapter {
 
 	@Override
 	public View getInfoContents(Marker marker) {
-		setInfo(marker, mInfoWindow);
-		return mInfoWindow;
+		setInfo(marker, infoWindow);
+		return infoWindow;
 	}
 	// 吹き出し有り
 
 	private void setInfo(Marker marker, View view) {
-		mTitleText = (TextView) view.findViewById(R.id.textViewTitle);
-		mTitleText.setText(marker.getTitle());
+		titleText = (TextView) view.findViewById(R.id.textViewTitle);
+		titleText.setText(marker.getTitle());
 	}
 }

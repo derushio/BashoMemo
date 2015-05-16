@@ -20,20 +20,20 @@ import jp.itnav.derushio.bashomemo.photo_sample.PhotoSample;
  * CardViewとActivityを繋ぐクラス
  */
 public class MemoCardAdapter extends RecyclerView.Adapter<MemoCardHolder> {
-	private Context mContext;
-	private ArrayList<MemoDataSet> mMemoDataSets;
+	private Context context;
+	private ArrayList<MemoDataSet> memoDataSetList;
 	// このデータセットの数だけCardViewを生成する
 
-	private int mSampleSize = 1;
+	private int sampleSize = 1;
 
 	public MemoCardAdapter(Context context, ArrayList<MemoDataSet> memoDataSets) {
-		mContext = context;
-		mMemoDataSets = memoDataSets;
+		this.context = context;
+		memoDataSetList = memoDataSets;
 	}
 
 	@Override
 	public MemoCardHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-		View view = LayoutInflater.from(mContext).inflate(R.layout.cardview_memo, viewGroup, false);
+		View view = LayoutInflater.from(context).inflate(R.layout.cardview_memo, viewGroup, false);
 		// cardview_memoを生成し、画面に描画するためのviewGroupに紐付け、
 		// そしてfalseにしているため、cardview_memoのレイアウトがそのまま帰ってくるのでviewに突っ込む
 		// （trueにしているとViewGroupが帰ってきてしまい、findViewByIdがうまく通らない）
@@ -44,15 +44,15 @@ public class MemoCardAdapter extends RecyclerView.Adapter<MemoCardHolder> {
 
 	@Override
 	public void onBindViewHolder(final MemoCardHolder memoCardHolder, int i) {
-		final MemoDataSet data = mMemoDataSets.get(i);
+		final MemoDataSet data = memoDataSetList.get(i);
 		// ポジション情報からデータセットを読み込み
 
-		memoCardHolder.mId = data.mId;
+		memoCardHolder.id = data.id;
 
-		memoCardHolder.mMemoName.setText(data.mMemoName);
+		memoCardHolder.memoName.setText(data.memoName);
 		// カードホルダーの名前にデータセットの名前を代入
 
-		ViewTreeObserver viewTreeObserver = memoCardHolder.mMemoImage.getViewTreeObserver();
+		ViewTreeObserver viewTreeObserver = memoCardHolder.memoImage.getViewTreeObserver();
 		viewTreeObserver.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
 			@Override
 			public boolean onPreDraw() {
@@ -64,28 +64,28 @@ public class MemoCardAdapter extends RecyclerView.Adapter<MemoCardHolder> {
 				Bitmap bitmap;
 				// 読み込む対象Bitmap
 
-				int width = memoCardHolder.mMemoImage.getWidth();
-				int height = memoCardHolder.mMemoImage.getHeight();
+				int width = memoCardHolder.memoImage.getWidth();
+				int height = memoCardHolder.memoImage.getHeight();
 
-				if (data.mMemoImageUri != null) {
+				if (data.memoImageUri != null) {
 					// mMemoImageUriが存在したら
-					BitmapFactory.decodeFile(data.mMemoImageUri.getPath(), options);
+					BitmapFactory.decodeFile(data.memoImageUri.getPath(), options);
 					// ファイルをデコード（情報だけ取ってこられていて、実際は読まれていない（optionsによって））
 
 					int sampleSize = PhotoSample.getSampleSize(options, width, height);
 					if (sampleSize != 0) {
-						mSampleSize = sampleSize;
+						MemoCardAdapter.this.sampleSize = sampleSize;
 					}
 
-					options.inSampleSize = mSampleSize;
+					options.inSampleSize = MemoCardAdapter.this.sampleSize;
 					// サンプルサイズを確定
 
 					options.inJustDecodeBounds = false;
 					// falseにすることにより、実際に画像を読む
-					bitmap = BitmapFactory.decodeFile(data.mMemoImageUri.getPath(), options);
+					bitmap = BitmapFactory.decodeFile(data.memoImageUri.getPath(), options);
 					// 画像をサンプリングして読む
 				} else {
-					BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.icon_photo, options);
+					BitmapFactory.decodeResource(context.getResources(), R.mipmap.icon_photo, options);
 					// 無いとき用の画像の情報を読み込む
 
 					int sampleSize = PhotoSample.getSampleSize(options, width, height);
@@ -93,34 +93,34 @@ public class MemoCardAdapter extends RecyclerView.Adapter<MemoCardHolder> {
 					Log.d("sampleSize", "" + sampleSize);
 
 					if (sampleSize != 0) {
-						mSampleSize = sampleSize;
+						MemoCardAdapter.this.sampleSize = sampleSize;
 					}
 
-					options.inSampleSize = mSampleSize;
+					options.inSampleSize = MemoCardAdapter.this.sampleSize;
 					// サンプルサイズを確定
 
 					options.inJustDecodeBounds = false;
 					// falseにすることにより、実際に画像を読む
-					bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.icon_photo, options);
+					bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.icon_photo, options);
 					// 画像をサンプリングして読む
 				}
 
-				memoCardHolder.mMemoImage.setImageBitmap(bitmap);
+				memoCardHolder.memoImage.setImageBitmap(bitmap);
 				// 読み込んだ画像をセットする
 
-				memoCardHolder.mMemoImage.getViewTreeObserver().removeOnPreDrawListener(this);
+				memoCardHolder.memoImage.getViewTreeObserver().removeOnPreDrawListener(this);
 
 				return false;
 			}
 		});
 
-		if (data.mOnClickListener != null) {
-			memoCardHolder.mCardView.setOnClickListener(data.mOnClickListener);
+		if (data.onClickListener != null) {
+			memoCardHolder.cardView.setOnClickListener(data.onClickListener);
 			// クリックした時の反応をセット
 		}
 
-		if (data.mOnLongClickListener != null) {
-			memoCardHolder.mCardView.setOnLongClickListener(data.mOnLongClickListener);
+		if (data.onLongClickListener != null) {
+			memoCardHolder.cardView.setOnLongClickListener(data.onLongClickListener);
 			// 長くクリックした時の反応をセット
 		}
 	}
@@ -128,8 +128,8 @@ public class MemoCardAdapter extends RecyclerView.Adapter<MemoCardHolder> {
 
 	@Override
 	public int getItemCount() {
-		if (mMemoDataSets != null) {
-			return mMemoDataSets.size();
+		if (memoDataSetList != null) {
+			return memoDataSetList.size();
 			// データセットのサイズからいくらアイテムあるか判断
 		} else {
 			return 0;

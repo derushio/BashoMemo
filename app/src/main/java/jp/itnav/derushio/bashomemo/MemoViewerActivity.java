@@ -42,26 +42,26 @@ public class MemoViewerActivity extends AppCompatActivity implements TextWatcher
 	// Statics
 
 	// View
-	private Toolbar mToolbar;
-	private TabWidget mTabWidget;
-	private View mIndicator;
-	private ViewPager mViewPager;
+	private Toolbar toolbar;
+	private TabWidget tabWidget;
+	private View indicator;
+	private ViewPager viewPager;
 	// View
 
 	// ViewPagerClass
-	private FragmentManager mFragmentManager;
-	private FragmentPagerAdapter mFragmentPagerAdapter;
+	private FragmentManager fragmentManager;
+	private FragmentPagerAdapter fragmentPagerAdapter;
 	// ViewPagerClass
 
 	// Fragments
-	private GoogleMapFragment mGoogleMapFragment;
-	private PhotoFragment mPhotoFragment;
-	private MemoFragment mMemoFragment;
+	private GoogleMapFragment googleMapFragment;
+	private PhotoFragment photoFragment;
+	private MemoFragment memoFragment;
 	// Fragments
 
 	// Vars
-	private MemoDataBaseManager mMemoDataBaseManager;
-	private long mId;
+	private MemoDataBaseManager memoDataBaseManager;
+	private long id;
 	// Vars
 
 	@Override
@@ -70,47 +70,47 @@ public class MemoViewerActivity extends AppCompatActivity implements TextWatcher
 		setContentView(R.layout.activity_memo_viewer);
 
 		Intent intent = getIntent();
-		mId = intent.getLongExtra(INTENT_EXTRA_ID, -1);
+		id = intent.getLongExtra(INTENT_EXTRA_ID, -1);
 
-		mMemoDataBaseManager = new MemoDataBaseManager(this);
+		memoDataBaseManager = new MemoDataBaseManager(this);
 
-		if (mId == -1) {
-			mId = mMemoDataBaseManager.addMemoData("新規データ");
+		if (id == -1) {
+			id = memoDataBaseManager.addMemoData("新規データ");
 		}
 
 		initializeToolbar();
 
-		mFragmentManager = getSupportFragmentManager();
+		fragmentManager = getSupportFragmentManager();
 
-		mFragmentPagerAdapter = new ViewPagerAdapter(this, mFragmentManager);
+		fragmentPagerAdapter = new ViewPagerAdapter(this, fragmentManager);
 
-		mViewPager = (ViewPager) findViewById(R.id.viewpager);
-		mViewPager.setAdapter(mFragmentPagerAdapter);
+		viewPager = (ViewPager) findViewById(R.id.viewpager);
+		viewPager.setAdapter(fragmentPagerAdapter);
 
 		final TabHost tabHost = (TabHost) findViewById(android.R.id.tabhost);
 		tabHost.setup();
 
-		mTabWidget = (TabWidget) findViewById(android.R.id.tabs);
-		mIndicator = findViewById(R.id.indicator);
+		tabWidget = (TabWidget) findViewById(android.R.id.tabs);
+		indicator = findViewById(R.id.indicator);
 
-		for (int i = 0; i < mFragmentPagerAdapter.getCount(); i++) {
+		for (int i = 0; i < fragmentPagerAdapter.getCount(); i++) {
 			TextView textView = (TextView) LayoutInflater.from(this).inflate(R.layout.tab_textview, null);
-			textView.setText(mFragmentPagerAdapter.getPageTitle(i));
+			textView.setText(fragmentPagerAdapter.getPageTitle(i));
 			tabHost.addTab(tabHost.newTabSpec(String.valueOf(i)).setIndicator(textView).setContent(android.R.id.tabcontent));
 		}
 
 		tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
 			@Override
 			public void onTabChanged(String tabId) {
-				mViewPager.setCurrentItem(Integer.valueOf(tabId));
+				viewPager.setCurrentItem(Integer.valueOf(tabId));
 			}
 		});
 
-		mViewPager.setOnPageChangeListener(new PageChangeListener());
+		viewPager.setOnPageChangeListener(new PageChangeListener());
 
-		mGoogleMapFragment = (GoogleMapFragment) mFragmentPagerAdapter.getItem(0);
+		googleMapFragment = (GoogleMapFragment) fragmentPagerAdapter.getItem(0);
 		Bundle googleMapArgment = new Bundle();
-		final LatLng latLng = mMemoDataBaseManager.findLatLngById(mId);
+		final LatLng latLng = memoDataBaseManager.findLatLngById(id);
 		double[] latLngDouble;
 		if (latLng != null) {
 			latLngDouble = new double[]{latLng.latitude, latLng.longitude};
@@ -118,11 +118,11 @@ public class MemoViewerActivity extends AppCompatActivity implements TextWatcher
 			latLngDouble = new double[]{GoogleMapFragment.ARGMENT_NULL, GoogleMapFragment.ARGMENT_NULL};
 		}
 		googleMapArgment.putDoubleArray(GoogleMapFragment.LAT_LNG_ARGMENT, latLngDouble);
-		mGoogleMapFragment.setArguments(googleMapArgment);
+		googleMapFragment.setArguments(googleMapArgment);
 
-		mPhotoFragment = (PhotoFragment) mFragmentPagerAdapter.getItem(1);
+		photoFragment = (PhotoFragment) fragmentPagerAdapter.getItem(1);
 		Bundle photoFragmentArgment = new Bundle();
-		Uri uri = mMemoDataBaseManager.findPictureUriById(mId);
+		Uri uri = memoDataBaseManager.findPictureUriById(id);
 		String path;
 		if (uri != null) {
 			path = uri.getPath();
@@ -130,29 +130,29 @@ public class MemoViewerActivity extends AppCompatActivity implements TextWatcher
 			path = PhotoFragment.ARGMENT_NULL;
 		}
 		photoFragmentArgment.putString(PhotoFragment.PHTO_URI_ARGMENT, path);
-		mPhotoFragment.setArguments(photoFragmentArgment);
+		photoFragment.setArguments(photoFragmentArgment);
 
-		mMemoFragment = (MemoFragment) mFragmentPagerAdapter.getItem(2);
+		memoFragment = (MemoFragment) fragmentPagerAdapter.getItem(2);
 		Bundle memoFragmentArgment = new Bundle();
-		String memo = mMemoDataBaseManager.findMemoById(mId);
+		String memo = memoDataBaseManager.findMemoById(id);
 		if (memo == null) {
 			memo = MemoFragment.ARGMENT_NULL;
 		}
 		memoFragmentArgment.putString(MemoFragment.MEMO_ARGMENT, memo);
-		mMemoFragment.setArguments(memoFragmentArgment);
+		memoFragment.setArguments(memoFragmentArgment);
 	}
 
 	private void initializeToolbar() {
-		mToolbar = (Toolbar) findViewById(R.id.toolbar);
-		if (mToolbar == null) {
+		toolbar = (Toolbar) findViewById(R.id.toolbar);
+		if (toolbar == null) {
 			throw new IllegalStateException("Layout is required to include a Toolbar with id " +
 					"'toolbar'");
 		}
 
-		mToolbar.setTitle(mMemoDataBaseManager.findTitleById(mId));
-		mToolbar.setTitleTextColor(Color.WHITE);
-		mToolbar.inflateMenu(R.menu.menu_memo_viewer);
-		setSupportActionBar(mToolbar);
+		toolbar.setTitle(memoDataBaseManager.findTitleById(id));
+		toolbar.setTitleTextColor(Color.WHITE);
+		toolbar.inflateMenu(R.menu.menu_memo_viewer);
+		setSupportActionBar(toolbar);
 	}
 
 	@Override
@@ -160,8 +160,8 @@ public class MemoViewerActivity extends AppCompatActivity implements TextWatcher
 		Intent intent = new Intent(this, MemoListActivity.class);
 		startActivity(intent);
 
-		mGoogleMapFragment.animationCancel();
-		mMemoDataBaseManager.updateMemoData(mId, mToolbar.getTitle().toString(), mGoogleMapFragment.getLastLatLng(), mPhotoFragment.getUri(), mMemoFragment.getMemo());
+		googleMapFragment.animationCancel();
+		memoDataBaseManager.updateMemoData(id, toolbar.getTitle().toString(), googleMapFragment.getLastLatLng(), photoFragment.getUri(), memoFragment.getMemo());
 
 		finish();
 	}
@@ -203,12 +203,12 @@ public class MemoViewerActivity extends AppCompatActivity implements TextWatcher
 				Button buttonOk = (Button) view.findViewById(R.id.button_ok);
 				Button buttonCancel = (Button) view.findViewById(R.id.button_cancel);
 
-				editName.setText(mToolbar.getTitle().toString());
+				editName.setText(toolbar.getTitle().toString());
 
 				buttonOk.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						mToolbar.setTitle(editName.getText().toString());
+						toolbar.setTitle(editName.getText().toString());
 						appCompatDialog.dismiss();
 					}
 				});
@@ -255,7 +255,7 @@ public class MemoViewerActivity extends AppCompatActivity implements TextWatcher
 			if (scrollingState == ViewPager.SCROLL_STATE_IDLE) {
 				updateIndicatorPosition(position, 0);
 			}
-			mTabWidget.setCurrentTab(position);
+			tabWidget.setCurrentTab(position);
 		}
 
 		@Override
@@ -269,15 +269,15 @@ public class MemoViewerActivity extends AppCompatActivity implements TextWatcher
 		}
 
 		private void updateIndicatorPosition(int position, float positionOffset) {
-			View tabView = mTabWidget.getChildTabViewAt(position);
+			View tabView = tabWidget.getChildTabViewAt(position);
 
 			int indicatorWidth = tabView.getWidth();
 			int indicatorLeft = (int) ((position + positionOffset) * indicatorWidth);
 
-			final FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) mIndicator.getLayoutParams();
+			final FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) indicator.getLayoutParams();
 			layoutParams.width = indicatorWidth;
 			layoutParams.setMargins(indicatorLeft, 0, 0, 0);
-			mIndicator.setLayoutParams(layoutParams);
+			indicator.setLayoutParams(layoutParams);
 		}
 	}
 }

@@ -14,8 +14,8 @@ import com.google.android.gms.maps.model.LatLng;
  * Created by derushio on 15/01/13.
  */
 public class MemoDataBaseManager {
-	private SQLiteDatabase mMemoDataBase;
-	private String mTableName = "memoDataBase";
+	private SQLiteDatabase memoDatabase;
+	private String tableName = "memoDataBase";
 
 	public int INDEX_ID;
 	public int INDEX_DATE;
@@ -25,7 +25,7 @@ public class MemoDataBaseManager {
 	public int INDEX_MEMO;
 
 	public MemoDataBaseManager(Context context) {
-		mMemoDataBase = new MemoDataBaseHelper(context, mTableName, 1).getWritableDatabase();
+		memoDatabase = new MemoDataBaseHelper(context, tableName, 1).getWritableDatabase();
 
 		Cursor cursor = getAllDataCursor(MemoDataBaseHelper.ITEM_ID);
 		cursor.moveToFirst();
@@ -42,7 +42,7 @@ public class MemoDataBaseManager {
 
 	public Cursor getAllDataCursor(Item orderByItem) {
 		String orderBy = orderByItem.NAME + " ASC";
-		return mMemoDataBase.query(mTableName, null, null, null, null, null, orderBy);
+		return memoDatabase.query(tableName, null, null, null, null, null, orderBy);
 	}
 
 	public long addMemoData(String title) {
@@ -66,13 +66,13 @@ public class MemoDataBaseManager {
 		}
 		contentValues.put(MemoDataBaseHelper.ITEM_MEMO.NAME, memo);
 
-		return mMemoDataBase.insert(mTableName, "", contentValues);
+		return memoDatabase.insert(tableName, "", contentValues);
 	}
 
 	public void deleteMemoData(long id) {
 		String whereCause = MemoDataBaseHelper.ITEM_ID.NAME + "==?";
 		String whereCauseArgs[] = {("" + id)};
-		mMemoDataBase.delete(mTableName, whereCause, whereCauseArgs);
+		memoDatabase.delete(tableName, whereCause, whereCauseArgs);
 	}
 
 	public void updateMemoData(long id, String title, LatLng latLng, Uri pictureUri, String memo) {
@@ -99,13 +99,13 @@ public class MemoDataBaseManager {
 		String whereCause = MemoDataBaseHelper.ITEM_ID.NAME + "==?";
 		String whereCauseArgs[] = {("" + id)};
 
-		mMemoDataBase.update(mTableName, contentValues, whereCause, whereCauseArgs);
+		memoDatabase.update(tableName, contentValues, whereCause, whereCauseArgs);
 	}
 
 	public Cursor findMemoDataById(long id) {
 		String selection = MemoDataBaseHelper.ITEM_ID.NAME + "==?";
 		String selectionArgs[] = {("" + id)};
-		return mMemoDataBase.query(mTableName, null, selection, selectionArgs, null, null, null);
+		return memoDatabase.query(tableName, null, selection, selectionArgs, null, null, null);
 	}
 
 	public String findTitleById(long id) {
@@ -135,6 +135,7 @@ public class MemoDataBaseManager {
 	}
 
 	public LatLng findLatLngById(long id) {
+
 		Cursor cursor = findMemoDataById(id);
 		cursor.moveToFirst();
 

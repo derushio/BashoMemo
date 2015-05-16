@@ -11,22 +11,22 @@ import android.view.View;
 public class MemoDataSet {
 
 	// CardView情報
-	public long mId;
-	public String mMemoName;
-	public Uri mMemoImageUri;
-	public View.OnClickListener mOnClickListener;
-	public View.OnLongClickListener mOnLongClickListener;
+	public long id;
+	public String memoName;
+	public Uri memoImageUri;
+	public View.OnClickListener onClickListener;
+	public View.OnLongClickListener onLongClickListener;
 	// CardView情報
 
 	private MemoDataSet() {
 	}
 
 	public MemoDataSet(long id, String memoName, Uri memoImageUri, View.OnClickListener onClickListener, View.OnLongClickListener onLongClickListener) {
-		mId = id;
-		mMemoName = memoName;
-		mMemoImageUri = memoImageUri;
-		mOnClickListener = onClickListener;
-		mOnLongClickListener = onLongClickListener;
+		this.id = id;
+		this.memoName = memoName;
+		this.memoImageUri = memoImageUri;
+		this.onClickListener = onClickListener;
+		this.onLongClickListener = onLongClickListener;
 		// 付加情報を自分に取り込む
 	}
 }

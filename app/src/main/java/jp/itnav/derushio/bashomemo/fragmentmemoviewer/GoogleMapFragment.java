@@ -39,53 +39,53 @@ public class GoogleMapFragment extends Fragment implements GooglePlayServicesCli
 	public static final String LAT_LNG_ARGMENT = "LatLng";
 	public static final double ARGMENT_NULL = -1D;
 
-	private View mRootView;
-	private FrameLayout mMapHolder;
-	private ProgressDialog mConnectingDialog;
+	private View rootView;
+	private FrameLayout mapHolder;
+	private ProgressDialog connectingDialog;
 
-	private GoogleMap mGoogleMap;
-	private LocationClient mLocationClient;
+	private GoogleMap googleMap;
+	private LocationClient locationClient;
 
-	private String mMarkerTitle = "Point";
-	private LatLng mLastLatLng;
+	private String markerTitle = "Point";
+	private LatLng lastLatLng;
 
-	private MemoViewerActivity.OnLocationChangedListener mOnLocationChangedListener;
+	private MemoViewerActivity.OnLocationChangedListener onLocationChangedListener;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		if (mRootView != null) {
-			ViewGroup parent = (ViewGroup) mRootView.getParent();
+		if (rootView != null) {
+			ViewGroup parent = (ViewGroup) rootView.getParent();
 			if (parent != null) {
-				parent.removeView(mRootView);
+				parent.removeView(rootView);
 			}
 		}
 
 		try {
-			if (mRootView == null) {
-				mRootView = inflater.inflate(R.layout.fragment_googlemap, container, false);
+			if (rootView == null) {
+				rootView = inflater.inflate(R.layout.fragment_googlemap, container, false);
 			}
 
-			if (mMapHolder == null) {
-				mMapHolder = (FrameLayout) mRootView.findViewById(R.id.mapHolder);
+			if (mapHolder == null) {
+				mapHolder = (FrameLayout) rootView.findViewById(R.id.mapHolder);
 			}
 
-			if (mGoogleMap == null) {
-				mGoogleMap = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMap();
+			if (googleMap == null) {
+				googleMap = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMap();
 
-				mGoogleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+				googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
 					@Override
 					public void onMapLongClick(LatLng latLng) {
 						setMarker(latLng);
 					}
 				});
 
-				mGoogleMap.setMyLocationEnabled(true);
+				googleMap.setMyLocationEnabled(true);
 
-				mGoogleMap.setInfoWindowAdapter(new CustomInfoAdapter(getActivity()));
-				mGoogleMap.setOnInfoWindowClickListener(new OnNavigateClickListener(getActivity()));
+				googleMap.setInfoWindowAdapter(new CustomInfoAdapter(getActivity()));
+				googleMap.setOnInfoWindowClickListener(new OnNavigateClickListener(getActivity()));
 
 				CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(35, 135), 4);
-				mGoogleMap.moveCamera(cameraUpdate);
+				googleMap.moveCamera(cameraUpdate);
 
 				double[] latLngDouble = getArguments().getDoubleArray(LAT_LNG_ARGMENT);
 				if (latLngDouble[0] != ARGMENT_NULL && latLngDouble[1] != ARGMENT_NULL) {
@@ -94,8 +94,8 @@ public class GoogleMapFragment extends Fragment implements GooglePlayServicesCli
 				}
 			}
 
-			mLocationClient = new LocationClient(getActivity(), this, null);
-			return mRootView;
+			locationClient = new LocationClient(getActivity(), this, null);
+			return rootView;
 		} catch (InflateException e) {
 			e.printStackTrace();
 		}
@@ -104,50 +104,50 @@ public class GoogleMapFragment extends Fragment implements GooglePlayServicesCli
 
 	public void setMarkerTitle(String markerTitle) {
 		if (markerTitle.equals("")) {
-			this.mMarkerTitle = "point";
+			this.markerTitle = "point";
 		} else {
-			this.mMarkerTitle = markerTitle;
+			this.markerTitle = markerTitle;
 		}
 
-		if (mLastLatLng != null) {
-			setMarker(mLastLatLng);
+		if (lastLatLng != null) {
+			setMarker(lastLatLng);
 		}
 	}
 
 	public void setMarker(LatLng position) {
 
-		if (mLocationClient != null) {
-			mLocationClient.disconnect();
+		if (locationClient != null) {
+			locationClient.disconnect();
 		}
 
-		mGoogleMap.clear();
-		mGoogleMap.addMarker(new MarkerOptions().position(position).title(mMarkerTitle));
-		mLastLatLng = position;
+		googleMap.clear();
+		googleMap.addMarker(new MarkerOptions().position(position).title(markerTitle));
+		lastLatLng = position;
 
-		if (mOnLocationChangedListener != null) {
-			mOnLocationChangedListener.onChange(position.latitude, position.longitude);
+		if (onLocationChangedListener != null) {
+			onLocationChangedListener.onChange(position.latitude, position.longitude);
 		}
 
 		CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(position, 16);
-		mGoogleMap.animateCamera(cameraUpdate);
+		googleMap.animateCamera(cameraUpdate);
 	}
 
 	@Override
 	public void onConnected(Bundle bundle) {
 		LocationRequest locationRequest = new LocationRequest();
 		locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-		mLocationClient.requestLocationUpdates(locationRequest, this);
+		locationClient.requestLocationUpdates(locationRequest, this);
 
-		mConnectingDialog = new ProgressDialog(getActivity(), ProgressDialog.STYLE_SPINNER);
-		mConnectingDialog.setMessage("現在地を取得中");
-		mConnectingDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "キャンセル", new DialogInterface.OnClickListener() {
+		connectingDialog = new ProgressDialog(getActivity(), ProgressDialog.STYLE_SPINNER);
+		connectingDialog.setMessage("現在地を取得中");
+		connectingDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "キャンセル", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				mLocationClient.disconnect();
+				locationClient.disconnect();
 			}
 		});
-		mConnectingDialog.setCancelable(false);
-		mConnectingDialog.show();
+		connectingDialog.setCancelable(false);
+		connectingDialog.show();
 	}
 
 	@Override
@@ -157,7 +157,7 @@ public class GoogleMapFragment extends Fragment implements GooglePlayServicesCli
 
 	@Override
 	public void onLocationChanged(Location location) {
-		mConnectingDialog.dismiss();
+		connectingDialog.dismiss();
 
 		LatLng nowPosition = new LatLng(location.getLatitude(), location.getLongitude());
 		setMarker(nowPosition);
@@ -191,15 +191,15 @@ public class GoogleMapFragment extends Fragment implements GooglePlayServicesCli
 	}
 
 	public void animationCancel() {
-		mGoogleMap.stopAnimation();
+		googleMap.stopAnimation();
 	}
 
 	public LatLng getLastLatLng() {
-		return mLastLatLng;
+		return lastLatLng;
 	}
 
 	public void setlatLng(LatLng latLng) {
-		if (mGoogleMap != null) {
+		if (googleMap != null) {
 			setMarker(latLng);
 		}
 	}

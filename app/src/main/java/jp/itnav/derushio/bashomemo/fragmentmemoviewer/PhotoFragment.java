@@ -40,41 +40,41 @@ public class PhotoFragment extends Fragment {
 
 	private static final String CAMERA_CACHE_NAME = "CAMERA_CACHE";
 
-	private View mRootView;
-	private ImageView mPhotoImage;
+	private View rootView;
+	private ImageView photoImage;
 
 	private boolean isInitialized = false;
-	private PhotoFileManager mPhotoFileManager;
-	public long mId;
-	private Uri mUri;
-	private Uri mTempUri;
-	private Bitmap mBitmap;
+	private PhotoFileManager photoFileManager;
+	public long id;
+	private Uri uri;
+	private Uri tempUri;
+	private Bitmap bitmap;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		mPhotoFileManager = new PhotoFileManager(getActivity());
+		photoFileManager = new PhotoFileManager(getActivity());
 		// PhotoFileManagerをインスタンス
 
-		if (mRootView != null) {
+		if (rootView != null) {
 			// mRootViewが定義されていたら
-			ViewGroup parent = (ViewGroup) mRootView.getParent();
+			ViewGroup parent = (ViewGroup) rootView.getParent();
 			// mRootViewの親情報を取得
 
 			if (parent != null) {
 				// 親が存在していたら
-				parent.removeView(mRootView);
+				parent.removeView(rootView);
 				// 親からmRootViewを削除
 			}
 		}
 
 		try {
-			if (mRootView == null) {
+			if (rootView == null) {
 				// mRootViewが定義されていなかったら
-				mRootView = inflater.inflate(R.layout.fragment_photo, container, false);
+				rootView = inflater.inflate(R.layout.fragment_photo, container, false);
 				// containerにinflateして、R.layout.fragment_photo情報をmRootViewに代入（falseのため）
 
-				mPhotoImage = (ImageView) mRootView.findViewById(R.id.imagePhoto);
-				mPhotoImage.setOnClickListener(new View.OnClickListener() {
+				photoImage = (ImageView) rootView.findViewById(R.id.imagePhoto);
+				photoImage.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
 						// mPhotoImageをクリックしたら
@@ -86,7 +86,7 @@ public class PhotoFragment extends Fragment {
 							public void onClick(DialogInterface dialog, int which) {
 								Intent intentCamera = new Intent();
 								intentCamera.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
-								intentCamera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mPhotoFileManager.getCacheFile(CAMERA_CACHE_NAME)));
+								intentCamera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFileManager.getCacheFile(CAMERA_CACHE_NAME)));
 								startActivityForResult(intentCamera, REQUEST_CAMERA);
 								// カメラで撮影
 							}
@@ -106,7 +106,7 @@ public class PhotoFragment extends Fragment {
 					}
 				});
 
-				ViewTreeObserver viewTreeObserver = mPhotoImage.getViewTreeObserver();
+				ViewTreeObserver viewTreeObserver = photoImage.getViewTreeObserver();
 				viewTreeObserver.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
 					@Override
 					public boolean onPreDraw() {
@@ -115,13 +115,13 @@ public class PhotoFragment extends Fragment {
 							Uri uri = Uri.parse(uriString);
 							setUri(uri);
 						}
-						mPhotoImage.getViewTreeObserver().removeOnPreDrawListener(this);
+						photoImage.getViewTreeObserver().removeOnPreDrawListener(this);
 						return false;
 					}
 				});
 			}
 
-			return mRootView;
+			return rootView;
 		} catch (InflateException e) {
 			// inflateできなかった場合
 			e.printStackTrace();
@@ -135,29 +135,29 @@ public class PhotoFragment extends Fragment {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == getActivity().RESULT_OK) {
 
-			if (mTempUri != null) {
-				File file = new File(mTempUri.getPath());
+			if (tempUri != null) {
+				File file = new File(tempUri.getPath());
 				file.delete();
 			}
 
 			switch (requestCode) {
 				case (REQUEST_CAMERA):
-					mTempUri = Uri.fromFile(mPhotoFileManager.getCacheFile(CAMERA_CACHE_NAME));
+					tempUri = Uri.fromFile(photoFileManager.getCacheFile(CAMERA_CACHE_NAME));
 					try {
 						String outputName = "" + System.currentTimeMillis() + ".jpg";
 						File outputFile = new File(getOutputImagePath());
-						mUri = Uri.fromFile(mPhotoFileManager.outputImage(BitmapFactory.decodeFile(mTempUri.getPath()), outputFile, outputName, false));
+						uri = Uri.fromFile(photoFileManager.outputImage(BitmapFactory.decodeFile(tempUri.getPath()), outputFile, outputName, false));
 					} catch (FileNotFoundException e) {
 						e.printStackTrace();
 					}
 					break;
 				case (REQUEST_GALLERY):
-					mTempUri = data.getData();
-					Log.d("uri", mTempUri.toString());
+					tempUri = data.getData();
+					Log.d("uri", tempUri.toString());
 					try {
 						String outputName = "" + System.currentTimeMillis() + ".jpg";
 						File outputFile = new File(getOutputImagePath());
-						mUri = Uri.fromFile(mPhotoFileManager.outputImage(MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mTempUri), outputFile, outputName, false));
+						uri = Uri.fromFile(photoFileManager.outputImage(MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), tempUri), outputFile, outputName, false));
 					} catch (FileNotFoundException e) {
 						e.printStackTrace();
 					} catch (IOException e) {
@@ -166,12 +166,12 @@ public class PhotoFragment extends Fragment {
 					break;
 			}
 
-			setUri(mUri);
+			setUri(uri);
 		}
 	}
 
 	public void setImageUri(Uri uri) {
-		if (mPhotoImage != null) {
+		if (photoImage != null) {
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			// サムネイルなのに大サイズの画像をいちいち読み込んでいたらメモリがいくらあっても足りない
 			// なので、サンプリング（ピクセルを抜いて読む）して、画像サイズを大幅に小さくする
@@ -183,35 +183,35 @@ public class PhotoFragment extends Fragment {
 			BitmapFactory.decodeFile(uri.getPath(), options);
 			// ファイルをデコード（情報だけ取ってこられていて、実際は読まれていない（optionsによって））
 
-			options.inSampleSize = PhotoSample.getSampleSize(options, mPhotoImage.getWidth(), mPhotoImage.getHeight());
+			options.inSampleSize = PhotoSample.getSampleSize(options, photoImage.getWidth(), photoImage.getHeight());
 			// サンプルサイズを確定
 
 			options.inJustDecodeBounds = false;
 			// falseにすることにより、実際に画像を読む
 			bitmap = BitmapFactory.decodeFile(uri.getPath(), options);
 			// 画像をサンプリングして読む
-			mPhotoImage.setImageBitmap(bitmap);
+			photoImage.setImageBitmap(bitmap);
 		}
 	}
 
 	public Uri getUri() {
-		return mUri;
+		return uri;
 	}
 
 	public void setUri(Uri uri) {
-		if (mPhotoImage != null) {
-			mUri = uri;
-			setImageUri(mUri);
-			mTempUri = mUri;
+		if (photoImage != null) {
+			this.uri = uri;
+			setImageUri(this.uri);
+			tempUri = this.uri;
 		}
 	}
 
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-		if (mBitmap != null) {
-			mBitmap.recycle();
-			mBitmap = null;
+		if (bitmap != null) {
+			bitmap.recycle();
+			bitmap = null;
 		}
 	}
 

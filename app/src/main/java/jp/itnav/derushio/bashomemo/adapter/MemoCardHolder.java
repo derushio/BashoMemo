@@ -15,25 +15,25 @@ import jp.itnav.derushio.bashomemo.view.CheckableImageView;
  */
 public class MemoCardHolder extends RecyclerView.ViewHolder {
 
-	public long mId;
+	public long id;
 	// Views
-	public CardView mCardView;
-	public ImageView mMemoImage;
-	public TextView mMemoName;
-	public CheckableImageView mChecker;
+	public CardView cardView;
+	public ImageView memoImage;
+	public TextView memoName;
+	public CheckableImageView cheker;
 	// Views
 
 	public MemoCardHolder(View itemView) {
 		super(itemView);
 
-		mCardView = (CardView) itemView;
-		mMemoImage = (ImageView) itemView.findViewById(R.id.memo_image);
-		mMemoName = (TextView) itemView.findViewById(R.id.memo_name);
-		mChecker = (CheckableImageView) itemView.findViewById(R.id.checker);
+		cardView = (CardView) itemView;
+		memoImage = (ImageView) itemView.findViewById(R.id.memo_image);
+		memoName = (TextView) itemView.findViewById(R.id.memo_name);
+		cheker = (CheckableImageView) itemView.findViewById(R.id.checker);
 		// 中身からfindViewByIdしていじれるようにする
 	}
 
 	public boolean getChecked(){
-		return mChecker.getChecked();
+		return cheker.getChecked();
 	}
 }

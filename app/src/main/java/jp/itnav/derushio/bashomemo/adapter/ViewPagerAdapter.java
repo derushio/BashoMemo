@@ -13,29 +13,29 @@ import jp.itnav.derushio.bashomemo.fragmentmemoviewer.PhotoFragment;
  * Created by derushio on 15/04/18.
  */
 public class ViewPagerAdapter extends FragmentPagerAdapter {
-	private Context mContext;
+	private Context context;
 
-	private String[] mTitles = {"地図", "写真", "メモ"};
-	private Fragment[] mItems = {new GoogleMapFragment(), new PhotoFragment(), new MemoFragment()};
+	private String[] titles = {"地図", "写真", "メモ"};
+	private Fragment[] items = {new GoogleMapFragment(), new PhotoFragment(), new MemoFragment()};
 
 	public ViewPagerAdapter(Context context, FragmentManager fragmentManager) {
 		super(fragmentManager);
 
-		mContext = context;
+		this.context = context;
 	}
 
 	@Override
 	public Fragment getItem(int position) {
-		return mItems[position];
+		return items[position];
 	}
 
 	@Override
 	public int getCount() {
-		return mItems.length;
+		return items.length;
 	}
 
 	@Override
 	public CharSequence getPageTitle(int position) {
-		return mTitles[position];
+		return titles[position];
 	}
 }

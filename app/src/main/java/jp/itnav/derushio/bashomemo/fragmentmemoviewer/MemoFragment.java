@@ -19,35 +19,35 @@ public class MemoFragment extends Fragment {
 	public static final String MEMO_ARGMENT = "Memo";
 	public static final String ARGMENT_NULL = "";
 
-	private View mRootView;
-	private EditText mEditMemo;
-	private OnKeyDownDisablePageChange mOnKeyDownDisablePageChange;
-	private String mMemo;
+	private View rootView;
+	private EditText editMemo;
+	private OnKeyDownDisablePageChange onKeyDownDisablePageChange;
+	private String memo;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		mOnKeyDownDisablePageChange = new OnKeyDownDisablePageChange();
-		if (mRootView != null) {
-			ViewGroup parent = (ViewGroup) mRootView.getParent();
+		onKeyDownDisablePageChange = new OnKeyDownDisablePageChange();
+		if (rootView != null) {
+			ViewGroup parent = (ViewGroup) rootView.getParent();
 			if (parent != null) {
-				parent.removeView(mRootView);
+				parent.removeView(rootView);
 			}
 		}
 
 		try {
-			if (mRootView == null) {
-				mRootView = inflater.inflate(R.layout.fragment_memo, container, false);
+			if (rootView == null) {
+				rootView = inflater.inflate(R.layout.fragment_memo, container, false);
 			}
 
-			if (mEditMemo == null) {
-				mEditMemo = (EditText) mRootView.findViewById(R.id.editMemo);
-				mEditMemo.setText(mMemo);
-				mEditMemo.setOnKeyListener(mOnKeyDownDisablePageChange);
+			if (editMemo == null) {
+				editMemo = (EditText) rootView.findViewById(R.id.editMemo);
+				editMemo.setText(memo);
+				editMemo.setOnKeyListener(onKeyDownDisablePageChange);
 
 				String memo = getArguments().getString(MEMO_ARGMENT);
 				setMemo(memo);
 			}
-			return mRootView;
+			return rootView;
 		} catch (InflateException e) {
 			e.printStackTrace();
 		}
@@ -58,23 +58,23 @@ public class MemoFragment extends Fragment {
 	@Override
 	public void onPause() {
 		super.onPause();
-		mEditMemo.clearFocus();
-		mMemo = mEditMemo.getText().toString();
+		editMemo.clearFocus();
+		memo = editMemo.getText().toString();
 	}
 
 	public void setMemo(String memo) {
-		if (mEditMemo != null) {
-			mEditMemo.setText(memo);
+		if (editMemo != null) {
+			editMemo.setText(memo);
 		}
 	}
 
 	public String getMemo() {
-		if (mEditMemo != null) {
-			mEditMemo.clearFocus();
-			mMemo = mEditMemo.getText().toString();
+		if (editMemo != null) {
+			editMemo.clearFocus();
+			memo = editMemo.getText().toString();
 		}
 
-		return mMemo;
+		return memo;
 	}
 
 	public class OnKeyDownDisablePageChange implements EditText.OnKeyListener {
@@ -83,7 +83,7 @@ public class MemoFragment extends Fragment {
 			switch (keyCode) {
 				case (KeyEvent.KEYCODE_DPAD_LEFT):
 					// ←ボタンが押されたら
-					if (mEditMemo.getSelectionEnd() == 0) {
+					if (editMemo.getSelectionEnd() == 0) {
 						// 選択範囲の終わり（カーソルも含む）が左端だったら
 						return true;
 						// その他のonKeyの動作を無効にする（ページが変わらない）
@@ -92,7 +92,7 @@ public class MemoFragment extends Fragment {
 				case (KeyEvent.KEYCODE_DPAD_RIGHT):
 					// →ボタンが押されたら
 					int length = ((EditText) v).getText().length();
-					if (mEditMemo.getSelectionStart() == length) {
+					if (editMemo.getSelectionStart() == length) {
 						// 選択範囲の始まり（カーソルも含む）が右端だったら
 						return true;
 						// その他のonKeyの動作を無効にする（ページが変わらない）

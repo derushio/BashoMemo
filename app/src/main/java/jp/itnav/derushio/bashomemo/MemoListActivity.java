@@ -6,11 +6,15 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -26,16 +30,16 @@ import jp.itnav.derushio.bashomemo.database.MemoDataBaseManager;
 public class MemoListActivity extends AppCompatActivity {
 
 	// View
-	private Toolbar mToolbar;
-	private RecyclerView mMemoList;
-	private ArrayList<MemoDataSet> mMemoDataSet;
-	private MemoCardAdapter mMemoCardAdapter;
-	private ImageView mImageFloating;
+	private Toolbar toolbar;
+	private RecyclerView memoList;
+	private ArrayList<MemoDataSet> memoDataSet;
+	private MemoCardAdapter memoCardAdapter;
+	private ImageView imageFloating;
 	// View
 
-	private MemoDataBaseManager mMemoDataBaseManager;
+	private MemoDataBaseManager memoDatabaseManager;
 
-	private boolean mDeleteMode = false;
+	private boolean deleteMode = false;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -44,33 +48,33 @@ public class MemoListActivity extends AppCompatActivity {
 		initializeToolbar();
 
 		// findViewById
-		mMemoList = (RecyclerView) findViewById(R.id.recycler_view);
-		mImageFloating = (ImageButton) findViewById(R.id.image_button_floating);
+		memoList = (RecyclerView) findViewById(R.id.recycler_view);
+		imageFloating = (ImageButton) findViewById(R.id.image_button_floating);
 		// findViewById
 
 		// レイアウト情報をLinearLayoutに設定
 		LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
 		linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-		mMemoList.setLayoutManager(linearLayoutManager);
+		memoList.setLayoutManager(linearLayoutManager);
 		// レイアウト情報をLinearLayoutに設定
 
 		// レイアウト情報を設定
-		mMemoList.setHasFixedSize(true);
-		mMemoList.setItemAnimator(new DefaultItemAnimator());
+		memoList.setHasFixedSize(true);
+		memoList.setItemAnimator(new DefaultItemAnimator());
 		// レイアウト情報を設定
 
 		// メモのデータベースを読み込み
-		mMemoDataBaseManager = new MemoDataBaseManager(this);
+		memoDatabaseManager = new MemoDataBaseManager(this);
 		// メモのデータベースを読み込み
 
 		// メモのデータ情報を定義
-		mMemoDataSet = new ArrayList<>();
-		mMemoCardAdapter = new MemoCardAdapter(this, mMemoDataSet);
-		mMemoList.setAdapter(mMemoCardAdapter);
+		memoDataSet = new ArrayList<>();
+		memoCardAdapter = new MemoCardAdapter(this, memoDataSet);
+		memoList.setAdapter(memoCardAdapter);
 		// メモのデータ情報を定義
 
 		// 全てのデータをロード
-		Cursor cursor = mMemoDataBaseManager.getAllDataCursor(MemoDataBaseHelper.ITEM_ID);
+		Cursor cursor = memoDatabaseManager.getAllDataCursor(MemoDataBaseHelper.ITEM_ID);
 		cursor.moveToFirst();
 		// 全てのデータをロード
 
@@ -79,16 +83,16 @@ public class MemoListActivity extends AppCompatActivity {
 			// サムネイルがある場合は読み込む
 			Uri uri = null;
 
-			if (cursor.getString(mMemoDataBaseManager.INDEX_PICTURE_URI) != null) {
-				uri = Uri.parse(cursor.getString(mMemoDataBaseManager.INDEX_PICTURE_URI));
+			if (cursor.getString(memoDatabaseManager.INDEX_PICTURE_URI) != null) {
+				uri = Uri.parse(cursor.getString(memoDatabaseManager.INDEX_PICTURE_URI));
 			}
 			// サムネイルがある場合は読み込む
 
-			final long id = cursor.getLong(mMemoDataBaseManager.INDEX_ID);
+			final long id = cursor.getLong(memoDatabaseManager.INDEX_ID);
 			// idを読み込み
 
 			// データセットに読み込んだ情報を追加
-			mMemoDataSet.add(new MemoDataSet(id, cursor.getString(mMemoDataBaseManager.INDEX_TITLE), uri,
+			memoDataSet.add(new MemoDataSet(id, cursor.getString(memoDatabaseManager.INDEX_TITLE), uri,
 					new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {
@@ -102,9 +106,9 @@ public class MemoListActivity extends AppCompatActivity {
 						@Override
 						public boolean onLongClick(View v) {
 							MemoCardHolder memoCardHolder = new MemoCardHolder(v);
-							memoCardHolder.mChecker.check();
-							mImageFloating.setImageResource(R.mipmap.button_floating_trash);
-							mDeleteMode = true;
+							memoCardHolder.cheker.check();
+							imageFloating.setImageResource(R.mipmap.button_floating_trash);
+							deleteMode = true;
 							return true;
 						}
 					}));
@@ -115,32 +119,58 @@ public class MemoListActivity extends AppCompatActivity {
 		}
 		// データをパース
 
-		mMemoCardAdapter.notifyDataSetChanged();
+		memoCardAdapter.notifyDataSetChanged();
 		// データセットが変わったことを通知する
 
 	}
 
 	private void initializeToolbar() {
-		mToolbar = (Toolbar) findViewById(R.id.toolbar);
-		if (mToolbar == null) {
+		toolbar = (Toolbar) findViewById(R.id.toolbar);
+		if (toolbar == null) {
 			throw new IllegalStateException("Layout is required to include a Toolbar with id " + "'toolbar'");
 		}
-		mToolbar.setTitle("場所メモったーよ！！");
-		mToolbar.setTitleTextColor(Color.WHITE);
-		mToolbar.inflateMenu(R.menu.menu_memo_list);
+		toolbar.setTitle("場所メモったーよ！！");
+		toolbar.setTitleTextColor(Color.WHITE);
+		toolbar.inflateMenu(R.menu.menu_memo_list);
 	}
 	// ツールバーを初期化
 
 	public void onClickFloatingButton(View v) {
-		if (mDeleteMode) {
-			for (int i = 0; i < mMemoList.getChildCount(); i++) {
-				MemoCardHolder holder = (MemoCardHolder) mMemoList.getChildViewHolder(mMemoList.getChildAt(i));
-				if (holder.getChecked()) {
-					mMemoDataBaseManager.deleteMemoData(holder.mId);
-					Intent intent = new Intent(this, this.getClass());
+		if (deleteMode) {
+
+			final AppCompatDialog appCompatDialog = new AppCompatDialog(this);
+			View view = LayoutInflater.from(this).inflate(R.layout.dialog_delete_memo, null, false);
+			appCompatDialog.setContentView(view);
+			appCompatDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+			Button buttonOk = (Button) view.findViewById(R.id.button_ok);
+			Button buttonCancel = (Button) view.findViewById(R.id.button_cancel);
+
+
+			buttonOk.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					for (int i = 0; i < memoList.getChildCount(); i++) {
+						MemoCardHolder holder = (MemoCardHolder) memoList.getChildViewHolder(memoList.getChildAt(i));
+						if (holder.getChecked()) {
+							memoDatabaseManager.deleteMemoData(holder.id);
+						}
+					}
+					appCompatDialog.dismiss();
+
+					Intent intent = new Intent(MemoListActivity.this, MemoListActivity.class);
 					startActivity(intent);
 				}
-			}
+			});
+
+			buttonCancel.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					appCompatDialog.dismiss();
+				}
+			});
+
+			appCompatDialog.show();
 		} else {
 			Intent intent = new Intent(MemoListActivity.this, MemoViewerActivity.class);
 			intent.putExtra(MemoViewerActivity.INTENT_EXTRA_ID, -1L);
